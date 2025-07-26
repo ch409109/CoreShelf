@@ -37,5 +37,42 @@ namespace CoreShelf.API.Controllers
 
             return book;
         }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> UpdateBook(int id, Book book)
+        {
+            if (book.Id != id || !BookExists(id))
+            {
+                return BadRequest("Cannot update this book");
+            }
+
+            context.Entry(book).State = EntityState.Modified;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteBook(int id)
+        {
+            var book = await context.Books.FindAsync(id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            context.Books.Remove(book);
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool BookExists(int id)
+        {
+            return context.Books.Any(x => x.Id == id);
+        }
     }
 }
