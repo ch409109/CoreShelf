@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CoreShelf.Core.Entities
 {
-    public class Book
+    public class Book : BaseEntity
     {
-        public int Id { get; set; }
         public required string Title { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
