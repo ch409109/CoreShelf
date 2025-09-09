@@ -1,5 +1,6 @@
 ﻿using CoreShelf.Core.Entities;
 using CoreShelf.Core.Interfaces;
+using CoreShelf.Core.Specifications;
 using CoreShelf.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,13 @@ namespace CoreShelf.API.Controllers
     public class BooksController(IGenericRepository<Book> repo) : ControllerBase
     {
         [HttpGet] //api/books
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<Book>>> GetBooks([FromQuery] BookSpecParams specParams)
         {
-            return Ok(await repo.GetAllAsync());
+            var spec = new BookSpecification(specParams);
+
+            var books = await repo.ListAsync(spec);
+
+            return Ok(books);
         }
 
         [HttpGet("{id:int}")] //api/books/2
@@ -36,7 +41,7 @@ namespace CoreShelf.API.Controllers
 
             if (await repo.SaveChangesAsync())
             {
-                return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
+                return CreatedAtAction("GetBook", new { id = book.Id }, book);
             }
 
             return BadRequest("Cannot create this book");
@@ -78,6 +83,14 @@ namespace CoreShelf.API.Controllers
             }
 
             return BadRequest("Cannot delete this book");
+        }
+
+        [HttpGet("categories")]
+        public async Task<ActionResult<IReadOnlyList<string>>> GetCategories()
+        {
+            var spec = new CategoryListSpecification();
+
+            return Ok(await repo.ListAsync(spec));
         }
 
         private bool BookExists(int id)

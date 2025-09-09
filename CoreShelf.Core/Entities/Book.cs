@@ -14,5 +14,6 @@ namespace CoreShelf.Core.Entities
         public int StockQuantity { get; set; }
         public required string ISBN { get; set; }
         public int PublicationYear { get; set; }
+        public required string Category { get; set; }
     }
 }
