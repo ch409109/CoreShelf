@@ -7,18 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreShelf.API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BooksController(IGenericRepository<Book> repo) : ControllerBase
+    public class BooksController(IGenericRepository<Book> repo) : BaseApiController
     {
         [HttpGet] //api/books
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks([FromQuery] BookSpecParams specParams)
         {
             var spec = new BookSpecification(specParams);
 
-            var books = await repo.ListAsync(spec);
-
-            return Ok(books);
+            return await CreatePagedResult(repo, spec, specParams.PageIndex, specParams.PageSize);
         }
 
         [HttpGet("{id:int}")] //api/books/2

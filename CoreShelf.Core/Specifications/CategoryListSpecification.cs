@@ -11,7 +11,7 @@ namespace CoreShelf.Core.Specifications
     {
         public CategoryListSpecification() : base(null)
         {
-            AddOrderBy(x => x.Category);
+            AddSelect(x => x.Category);
             ApplyDistinct();
         }
     }
