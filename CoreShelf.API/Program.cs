@@ -1,3 +1,4 @@
+using CoreShelf.API.Middleware;
 using CoreShelf.Core.Interfaces;
 using CoreShelf.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace CoreShelf.API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
