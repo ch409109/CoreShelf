@@ -1,7 +1,9 @@
 using CoreShelf.API.Middleware;
 using CoreShelf.Core.Interfaces;
 using CoreShelf.Infrastructure.Data;
+using CoreShelf.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace CoreShelf.API
 {
@@ -20,6 +22,13 @@ namespace CoreShelf.API
                 x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
+            {
+                var connString = builder.Configuration.GetConnectionString("Redis") ?? throw new Exception("Cannot get redis connection string");
+                var configuration = ConfigurationOptions.Parse(connString, true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+            builder.Services.AddSingleton<ICartService, CartService>();
 
             var app = builder.Build();
 
