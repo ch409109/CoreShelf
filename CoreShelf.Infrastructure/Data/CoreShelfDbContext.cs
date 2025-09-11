@@ -13,6 +13,7 @@ namespace CoreShelf.Infrastructure.Data
     public class CoreShelfDbContext(DbContextOptions options) : IdentityDbContext<AppUser>(options)
     {
         public DbSet<Book> Books { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
