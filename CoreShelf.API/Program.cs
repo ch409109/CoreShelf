@@ -1,4 +1,5 @@
 using CoreShelf.API.Middleware;
+using CoreShelf.Core.Entities;
 using CoreShelf.Core.Interfaces;
 using CoreShelf.Infrastructure.Data;
 using CoreShelf.Infrastructure.Services;
@@ -29,6 +30,9 @@ namespace CoreShelf.API
                 return ConnectionMultiplexer.Connect(configuration);
             });
             builder.Services.AddSingleton<ICartService, CartService>();
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityApiEndpoints<AppUser>()
+                .AddEntityFrameworkStores<CoreShelfDbContext>();
 
             var app = builder.Build();
 
@@ -47,6 +51,7 @@ namespace CoreShelf.API
 
 
             app.MapControllers();
+            app.MapGroup("api").MapIdentityApi<AppUser>();
 
             app.Run();
         }

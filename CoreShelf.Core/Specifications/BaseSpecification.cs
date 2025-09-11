@@ -17,7 +17,7 @@ namespace CoreShelf.Core.Specifications
 
         public Expression<Func<T, object>>? OrderByDescending { get; private set; }
 
-        public bool IsDistinc { get; private set; }
+        public bool IsDistinct { get; private set; }
 
         public int Skip { get; private set; }
 
@@ -47,7 +47,7 @@ namespace CoreShelf.Core.Specifications
 
         protected void ApplyDistinct()
         {
-            IsDistinc = true;
+            IsDistinct = true;
         }
 
         protected void ApplyPaging(int skip, int take)
