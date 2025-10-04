@@ -14,6 +14,7 @@ namespace CoreShelf.Infrastructure.Data
     {
         public DbSet<Book> Books { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
