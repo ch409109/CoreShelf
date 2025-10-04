@@ -33,6 +33,7 @@ namespace CoreShelf.API
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityApiEndpoints<AppUser>()
                 .AddEntityFrameworkStores<CoreShelfDbContext>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             var app = builder.Build();
 
