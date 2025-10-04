@@ -7,20 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreShelf.API.Controllers
 {
-    public class BooksController(IGenericRepository<Book> repo) : BaseApiController
+    public class BooksController(IUnitOfWork unit) : BaseApiController
     {
         [HttpGet] //api/books
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks([FromQuery] BookSpecParams specParams)
         {
             var spec = new BookSpecification(specParams);
 
-            return await CreatePagedResult(repo, spec, specParams.PageIndex, specParams.PageSize);
+            return await CreatePagedResult(unit.Repository<Book>(), spec, specParams.PageIndex, specParams.PageSize);
         }
 
         [HttpGet("{id:int}")] //api/books/2
         public async Task<ActionResult<Book>> GetBook(int id)
         {
-            var book = await repo.GetByIdAsync(id);
+            var book = await unit.Repository<Book>().GetByIdAsync(id);
 
             if (book == null)
             {
@@ -33,9 +33,9 @@ namespace CoreShelf.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> CreateBook(Book book)
         {
-            repo.Add(book);
+            unit.Repository<Book>().Add(book);
 
-            if (await repo.SaveChangesAsync())
+            if (await unit.Complete())
             {
                 return CreatedAtAction("GetBook", new { id = book.Id }, book);
             }
@@ -51,9 +51,9 @@ namespace CoreShelf.API.Controllers
                 return BadRequest("Cannot update this book");
             }
 
-            repo.Update(book);
+            unit.Repository<Book>().Update(book);
 
-            if (await repo.SaveChangesAsync())
+            if (await unit.Complete())
             {
                 return NoContent();
             }
@@ -64,16 +64,16 @@ namespace CoreShelf.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteBook(int id)
         {
-            var book = await repo.GetByIdAsync(id);
+            var book = await unit.Repository<Book>().GetByIdAsync(id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            repo.Delete(book);
+            unit.Repository<Book>().Delete(book);
 
-            if (await repo.SaveChangesAsync())
+            if (await unit.Complete())
             {
                 return NoContent();
             }
@@ -86,12 +86,12 @@ namespace CoreShelf.API.Controllers
         {
             var spec = new CategoryListSpecification();
 
-            return Ok(await repo.ListAsync(spec));
+            return Ok(await unit.Repository<Book>().ListAsync(spec));
         }
 
         private bool BookExists(int id)
         {
-            return repo.Exists(id);
+            return unit.Repository<Book>().Exists(id);
         }
     }
 }

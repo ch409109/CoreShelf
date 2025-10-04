@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 namespace CoreShelf.Infrastructure.Services
 {
     public class PaymentService(IConfiguration config, ICartService cartService,
-        IGenericRepository<Core.Entities.Book> bookRepo,
-        IGenericRepository<DeliveryMethod> dmRepo) : IPaymentService
+         IUnitOfWork unit) : IPaymentService
     {
         public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
         {
@@ -29,7 +28,7 @@ namespace CoreShelf.Infrastructure.Services
 
             if (cart.DeliveryMethodId.HasValue)
             {
-                var deliveryMethod = await dmRepo.GetByIdAsync((int)cart.DeliveryMethodId);
+                var deliveryMethod = await unit.Repository<DeliveryMethod>().GetByIdAsync((int)cart.DeliveryMethodId);
 
                 if (deliveryMethod == null)
                 {
@@ -41,7 +40,7 @@ namespace CoreShelf.Infrastructure.Services
 
             foreach (var item in cart.Items)
             {
-                var bookItem = await bookRepo.GetByIdAsync(item.BookId);
+                var bookItem = await unit.Repository<Core.Entities.Book>().GetByIdAsync(item.BookId);
                 if (bookItem == null)
                 {
                     return null;
