@@ -1,4 +1,5 @@
 using CoreShelf.API.Middleware;
+using CoreShelf.API.SignalR;
 using CoreShelf.Core.Entities;
 using CoreShelf.Core.Interfaces;
 using CoreShelf.Infrastructure.Data;
@@ -35,6 +36,7 @@ namespace CoreShelf.API
             builder.Services.AddIdentityApiEndpoints<AppUser>()
                 .AddEntityFrameworkStores<CoreShelfDbContext>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -49,11 +51,12 @@ namespace CoreShelf.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
             app.MapGroup("api").MapIdentityApi<AppUser>();
+            app.MapHub<NotificationHub>("/hub/notifications");
 
             app.Run();
         }
