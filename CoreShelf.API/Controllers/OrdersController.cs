@@ -1,7 +1,9 @@
-﻿using CoreShelf.API.Extensions;
+﻿using CoreShelf.API.DTOs;
+using CoreShelf.API.Extensions;
 using CoreShelf.Core.Entities;
 using CoreShelf.Core.Entities.OrderAggregate;
 using CoreShelf.Core.Interfaces;
+using CoreShelf.Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreShelf.API.Controllers
@@ -29,7 +31,7 @@ namespace CoreShelf.API.Controllers
 
             foreach (var item in cart.Items)
             {
-                var productItem = await unit.Repository<Product>().GetByIdAsync(item.ProductId);
+                var productItem = await unit.Repository<Book>().GetByIdAsync(item.BookId);
 
                 if (productItem == null)
                 {
@@ -39,8 +41,7 @@ namespace CoreShelf.API.Controllers
                 var itemOrdered = new ProductItemOrdered
                 {
                     ProductId = productItem.Id,
-                    ProductName = productItem.Name,
-                    PictureUrl = productItem.PictureUrl
+                    ProductName = productItem.Title
                 };
 
                 var orderItem = new OrderItem
@@ -87,11 +88,13 @@ namespace CoreShelf.API.Controllers
 
             var orders = await unit.Repository<Order>().ListAsync(spec);
 
+            var ordersToReturn = orders.Select(o => o.ToDto()).ToList();
+
             return Ok(orders);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Order>> GetOrderById(int id)
+        public async Task<ActionResult<OrderDto>> GetOrderById(int id)
         {
             var spec = new OrderSpecification(User.GetEmail(), id);
 
@@ -102,7 +105,7 @@ namespace CoreShelf.API.Controllers
                 return NotFound();
             }
 
-            return order;
+            return order.ToDto();
         }
     }
 }

@@ -10,6 +10,5 @@ namespace CoreShelf.Core.Entities.OrderAggregate
     {
         public int ProductId { get; set; }
         public required string ProductName { get; set; }
-        public required string PictureUrl { get; set; }
     }
 }
