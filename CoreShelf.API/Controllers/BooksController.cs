@@ -2,6 +2,7 @@
 using CoreShelf.Core.Interfaces;
 using CoreShelf.Core.Specifications;
 using CoreShelf.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,7 @@ namespace CoreShelf.API.Controllers
             return book;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Book>> CreateBook(Book book)
         {
@@ -43,6 +45,7 @@ namespace CoreShelf.API.Controllers
             return BadRequest("Cannot create this book");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateBook(int id, Book book)
         {
@@ -61,6 +64,7 @@ namespace CoreShelf.API.Controllers
             return BadRequest("Cannot update this book");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteBook(int id)
         {

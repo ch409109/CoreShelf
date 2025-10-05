@@ -1,4 +1,5 @@
 ﻿using CoreShelf.API.DTOs;
+using CoreShelf.API.Extensions;
 using CoreShelf.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -52,23 +53,19 @@ namespace CoreShelf.API.Controllers
                 return NoContent();
             }
 
-            var user = await signInManager.UserManager.Users
-                .FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
-
-            if (user == null)
-            {
-                return Unauthorized();
-            }
+            var user = await signInManager.UserManager.GetUserByEmailWithAddress(User);
 
             return Ok(new
             {
                 user.FirstName,
                 user.LastName,
-                user.Email
+                user.Email,
+                Address = user.Address?.ToDto(),
+                Roles = User.FindFirstValue(ClaimTypes.Role)
             });
         }
 
-        [HttpGet]
+        [HttpGet("auth-status")]
         public ActionResult GetAuthState()
         {
             return Ok(new { IsAuthenticated = User.Identity?.IsAuthenticated ?? false });

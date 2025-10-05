@@ -4,6 +4,7 @@ using CoreShelf.Core.Entities;
 using CoreShelf.Core.Interfaces;
 using CoreShelf.Infrastructure.Data;
 using CoreShelf.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -34,6 +35,7 @@ namespace CoreShelf.API
             builder.Services.AddSingleton<ICartService, CartService>();
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityApiEndpoints<AppUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<CoreShelfDbContext>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddSignalR();
