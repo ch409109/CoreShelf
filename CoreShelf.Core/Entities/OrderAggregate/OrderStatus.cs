@@ -11,6 +11,7 @@ namespace CoreShelf.Core.Entities.OrderAggregate
         Pending,
         PaymentReceived,
         PaymentFailed,
-        PaymentMismatch
+        PaymentMismatch,
+        Refunded
     }
 }
